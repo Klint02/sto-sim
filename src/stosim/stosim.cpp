@@ -72,6 +72,10 @@ namespace stochastic
         this->name = name;
     }
 
+    int& Vessel::environment() {
+        return env;
+    }
+
     auto Vessel::add(std::string key, int value) -> std::expected<std::string, SymbolTableCodes>
     {
         if (symbol_table.try_emplace(key, value).second)
@@ -81,6 +85,14 @@ namespace stochastic
         else
         {
             return std::unexpected(SymbolTableCodes::MALFORMED_REACTANT);
+        }
+    }
+
+    void Vessel::add(std::expected<stochastic::Reaction, stochastic::SymbolTableCodes> reaction)
+    {
+        if (reaction)
+        {
+            reactions.push_back(reaction.value());
         }
     }
 
@@ -221,6 +233,17 @@ namespace stochastic
         if (lhs && rhs)
         {
             lhs.value().products.push_back(rhs.value());
+            return lhs;
+        }
+        // TODO(NKC): More detailed error handling
+        return std::unexpected(SymbolTableCodes::MALFORMED_REACTANT);
+    }
+
+    auto operator>>=(std::expected<Reaction, SymbolTableCodes> lhs, const int rhs) -> std::expected<Reaction, SymbolTableCodes>
+    {
+        if (lhs && rhs)
+        {
+            std::cout << "Shit aint implemented yet" << std::endl;
             return lhs;
         }
         // TODO(NKC): More detailed error handling

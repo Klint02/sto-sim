@@ -5,7 +5,8 @@
 #include <unordered_map> //Should not need to be included. Look into why
 #include <expected>      //Should not need to be included. Look into why
 #include <algorithm>
-#include "stosim.hpp"
+#include "stosim/stosim.hpp"
+#include "vessels/vessels.hpp"
 
 int main(){
     std::cout << "Hello, from sto-sim!\n";
@@ -33,6 +34,7 @@ int main(){
         std::cout << test.value() << std::endl;
     }
 
+    stochastic::Vessel v = simple();
 
     // Define state: A = 100, B = 0, C = 1
     std::map<std::string, int> state = {
