@@ -14,9 +14,9 @@ namespace stochastic {
         std::vector<std::string> inputs;
         std::vector<std::string> products;
         double delay;
-        double computeDelay(const std::map<std::string, int> &state);
-        bool isAble(const std::map<std::string, int> &state);
-        void update(std::map<std::string, int> &state);
+        double computeDelay(const std::unordered_map<std::string, int> &state,double T);
+        bool isAble(const std::unordered_map<std::string, int> &state);
+        void update(std::unordered_map<std::string, int> &state);
         
         friend std::ostream& operator<<(std::ostream& os, const Reaction& obj);
     };
@@ -51,14 +51,14 @@ namespace stochastic {
             auto getName();
             auto add(std::string key, int value) -> std::expected<std::string, SymbolTableCodes>;
             void add(std::expected<stochastic::Reaction, stochastic::SymbolTableCodes> reaction);
+            std::vector<Reaction> reactions;
+            std::unordered_map<std::string, int> symbol_table;
 
         private:
             std::string name;
-            std::vector<Reaction> reactions;
-            std::unordered_map<std::string, int> symbol_table;
     };
 
-    void simulate(std::vector<Reaction> &reactions, int T, std::map<std::string, int> &state);
+    void simulate(Vessel &vessel, double T );
         
 
     auto operator+(std::expected<std::string, SymbolTableCodes> lhs, std::expected<std::string, SymbolTableCodes> rhs) -> std::expected<Reaction, SymbolTableCodes>;

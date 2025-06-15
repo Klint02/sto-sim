@@ -8,7 +8,8 @@
 #include <cmath>
 #include <random>
 #include <map>
-
+#include <limits>
+#include <cfloat>
 #include "stosim.hpp"
 
 namespace stochastic
@@ -96,24 +97,23 @@ namespace stochastic
         }
     }
 
-    double Reaction::computeDelay(const std::map<std::string, int> &state)
+    double Reaction::computeDelay(const std::unordered_map<std::string, int> &state, double T)
     {
         double product = 1.0;
-        double lambda = 0.001;
         for (const auto &reactant : inputs)
         {
-            auto temp = state.find(reactant);
-            if (temp != state.end() && temp->second > 0)
+            const auto reactant_state = state.find(reactant);
+            if (reactant_state->second > 0)
             {
-                product *= temp->second;
+                product *= reactant_state->second;
             }
             else
             {
-                return INFINITY;
+                return T+1;
             }
         }
 
-        double rate = lambda * product;
+        double rate = delay * product;
 
         static std::random_device rd;
         static std::mt19937 gen(rd());
@@ -123,7 +123,7 @@ namespace stochastic
         return exp_dist(gen);
     }
 
-    bool Reaction::isAble(const std::map<std::string, int> &state)
+    bool Reaction::isAble(const std::unordered_map<std::string, int> &state)
     {
         for (const auto &reactant : inputs)
         {
@@ -135,7 +135,7 @@ namespace stochastic
         return true;
     }
 
-    void Reaction::update(std::map<std::string, int> &state)
+    void Reaction::update(std::unordered_map<std::string, int> &state)
     {
         for (const auto &reactant : inputs)
         {
@@ -147,16 +147,16 @@ namespace stochastic
         }
     }
 
-    void simulate(std::vector<Reaction> &reactions, int T, std::map<std::string, int> &state)
+    void simulate(Vessel &vessel, double T)
     {
         double t = 0;
 
         while (t <= T)
         {
             std::vector<int> delays;
-            for (auto &r : reactions)
+            for (auto &r : vessel.reactions)
             {
-                delays.push_back(r.computeDelay(state));
+                delays.push_back(r.computeDelay(vessel.symbol_table,T));
             }
 
             double delay = *std::min_element(delays.begin(), delays.end());
@@ -165,14 +165,14 @@ namespace stochastic
             int r_index = std::distance(delays.begin(), min_it);
             if (t > T)
                 break;
-            Reaction &r = reactions[r_index];
-            if (r.isAble(state))
+            Reaction &r = vessel.reactions[r_index];
+            if (r.isAble(vessel.symbol_table))
             {
-                r.update(state);
+                r.update(vessel.symbol_table);
             }
 
             std::cout << "t = " << t << ": ";
-            for (const auto &[name, amount] : state)
+            for (const auto &[name, amount] : vessel.symbol_table)
             {
                 std::cout << name << "=" << amount << " ";
             }
