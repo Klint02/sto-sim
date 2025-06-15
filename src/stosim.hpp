@@ -2,6 +2,21 @@
 #define STOSIM_HEADER
 namespace stochastic {
 
+/*
+    struct simulation {
+        Vessel Master;
+        std::vector<int> timeseries;
+        std::vector<Vessel> data;
+    };
+*/
+
+    struct Reaction {
+        std::vector<std::string> input;
+        std::vector<std::string> output;
+        double delay;
+
+        friend std::ostream& operator<<(std::ostream& os, const Reaction& obj);
+    };
 
     enum class SimCodes
     {
@@ -11,9 +26,9 @@ namespace stochastic {
     };
 
     enum class SymbolTableCodes {
-        SUCCESS,
+        MALFORMED_REACTANT,
         ALREADY_PRESENT,
-        
+
     };
 
     void runSimulation(int simulation);
@@ -25,12 +40,18 @@ namespace stochastic {
         public:
             Vessel(std::string name);
     
-            auto add(std::string key, int value) -> std::expected<int, SymbolTableCodes>;
+            auto add(std::string key, int value) -> std::expected<std::string, SymbolTableCodes>;
     
         private:
             std::string name;
             std::unordered_map<std::string, int> symbol_table;
     };
+
+    auto operator+(std::expected<std::string, SymbolTableCodes> lhs, std::expected<std::string, SymbolTableCodes> rhs) -> std::expected<Reaction, SymbolTableCodes>;
+    auto operator>>(std::expected<std::string, SymbolTableCodes> lhs, double rhs) -> std::expected<Reaction, SymbolTableCodes>;
+    auto operator>>(std::expected<Reaction, SymbolTableCodes> lhs, double rhs) -> std::expected<Reaction, SymbolTableCodes>;
+    auto operator>>=(std::expected<Reaction, SymbolTableCodes> lhs, std::expected<Reaction, SymbolTableCodes> rhs) -> std::expected<Reaction, SymbolTableCodes>;
+    auto operator>>=(std::expected<Reaction, SymbolTableCodes> lhs, std::expected<std::string, SymbolTableCodes> rhs) -> std::expected<Reaction, SymbolTableCodes>;
 
 }
 #endif
