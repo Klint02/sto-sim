@@ -2,6 +2,25 @@
 #define STOSIM_HEADER
 namespace stochastic {
 
+/*
+    struct simulation {
+        Vessel Master;
+        std::vector<int> timeseries;
+        std::vector<Vessel> data;
+    };
+*/
+
+    struct Reaction{
+        std::vector<std::string> inputs;
+        std::vector<std::string> products;
+        double delay;
+        
+        double computeDelay(const std::map<std::string, int> &state);
+        bool isAble(const std::map<std::string, int> &state);
+        void update(std::map<std::string, int> &state);
+        
+        friend std::ostream& operator<<(std::ostream& os, const Reaction& obj);
+    };
 
     enum class SimCodes
     {
@@ -11,9 +30,9 @@ namespace stochastic {
     };
 
     enum class SymbolTableCodes {
-        SUCCESS,
+        MALFORMED_REACTANT,
         ALREADY_PRESENT,
-        
+
     };
 
     void runSimulation(int simulation);
@@ -26,21 +45,22 @@ namespace stochastic {
             Vessel(std::string name);
             double compute_delay(double lambda, const std::vector<Vessel>& R, const std::map<std::string,int>& state);
 
-            auto add(std::string key, int value) -> std::expected<int, SymbolTableCodes>;
             auto getName();
+            auto add(std::string key, int value) -> std::expected<std::string, SymbolTableCodes>;
+    
         private:
             std::string name;
             std::unordered_map<std::string, int> symbol_table;
     };
-    struct Reaction{
-        double lambda;
-        std::vector<std::string> inputs;
-        std::vector<std::string> products;
-        double computeDelay(const std::map<std::string, int> &state);
-        bool isAble(const std::map<std::string, int> &state);
-        void update(std::map<std::string, int> &state);
-    };
+
     void simulate(std::vector<Reaction> &reactions, int T, std::map<std::string, int> &state);
         
+
+    auto operator+(std::expected<std::string, SymbolTableCodes> lhs, std::expected<std::string, SymbolTableCodes> rhs) -> std::expected<Reaction, SymbolTableCodes>;
+    auto operator>>(std::expected<std::string, SymbolTableCodes> lhs, double rhs) -> std::expected<Reaction, SymbolTableCodes>;
+    auto operator>>(std::expected<Reaction, SymbolTableCodes> lhs, double rhs) -> std::expected<Reaction, SymbolTableCodes>;
+    auto operator>>=(std::expected<Reaction, SymbolTableCodes> lhs, std::expected<Reaction, SymbolTableCodes> rhs) -> std::expected<Reaction, SymbolTableCodes>;
+    auto operator>>=(std::expected<Reaction, SymbolTableCodes> lhs, std::expected<std::string, SymbolTableCodes> rhs) -> std::expected<Reaction, SymbolTableCodes>;
+
 }
 #endif
