@@ -84,7 +84,7 @@ namespace stochastic
         }
     }
 
-    double Reaction::computeDelay(const std::map<std::string, int> &state)
+    double Reaction::computeDelay(const std::unordered_map<std::string, int> &state)
     {
         double product = 1.0;
         double lambda = 0.001;
@@ -111,7 +111,7 @@ namespace stochastic
         return exp_dist(gen);
     }
 
-    bool Reaction::isAble(const std::map<std::string, int> &state)
+    bool Reaction::isAble(const std::unordered_map<std::string, int> &state)
     {
         for (const auto &reactant : inputs)
         {
@@ -123,7 +123,7 @@ namespace stochastic
         return true;
     }
 
-    void Reaction::update(std::map<std::string, int> &state)
+    void Reaction::update(std::unordered_map<std::string, int> &state)
     {
         for (const auto &reactant : inputs)
         {
@@ -135,16 +135,16 @@ namespace stochastic
         }
     }
 
-    void simulate(std::vector<Reaction> &reactions, int T, std::map<std::string, int> &state)
+    void simulate(Vessel &Vessel, int T)
     {
         double t = 0;
 
         while (t <= T)
         {
             std::vector<int> delays;
-            for (auto &r : reactions)
+            for (auto &r : Vessel.inputs)
             {
-                delays.push_back(r.computeDelay(state));
+                delays.push_back(r.computeDelay(Vessel.symbol_table));
             }
 
             double delay = *std::min_element(delays.begin(), delays.end());
@@ -153,14 +153,14 @@ namespace stochastic
             int r_index = std::distance(delays.begin(), min_it);
             if (t > T)
                 break;
-            Reaction &r = reactions[r_index];
-            if (r.isAble(state))
+            Reaction &r = Vessel.inputs[r_index];
+        if (r.isAble(Vessel.symbol_table))
             {
-                r.update(state);
+                r.update(Vessel.symbol_table);
             }
 
             std::cout << "t = " << t << ": ";
-            for (const auto &[name, amount] : state)
+            for (const auto &[name, amount] : Vessel.symbol_table)
             {
                 std::cout << name << "=" << amount << " ";
             }
