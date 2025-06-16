@@ -10,8 +10,6 @@
 #include <map>
 #include <limits>
 #include <cfloat>
-#include <fstream>
-
 #include "stosim.hpp"
 
 namespace stochastic
@@ -153,13 +151,10 @@ namespace stochastic
     void simulate(Vessel &vessel, double T, bool csv)
     {
         double t = 0;
-        std::ofstream myfile;
-        myfile.open("tester.csv",std::ios::trunc);
-        myfile << vessel.csv_fields;
 
         while (t <= T)
         {
-            std::vector<double> delays;
+            std::vector<int> delays;
             for (auto &r : vessel.reactions)
             {
                 delays.push_back(r.computeDelay(vessel.symbol_table, T));
@@ -176,19 +171,14 @@ namespace stochastic
             {
                 r.update(vessel.symbol_table);
             }
-
-            //Printing state in terminal each round.
-           
             if (csv)
             {
-                
-                myfile << t << "|";
+                std::cout << t << "|";
                 for (const auto &[name, amount] : vessel.symbol_table)
                 {
-                    myfile << amount << "|";
+                    std::cout << amount << "|";
                 }
-                myfile << "\n"; 
-                
+                std::cout << "\n"; 
             }
             else
             {
@@ -201,7 +191,6 @@ namespace stochastic
                 std::cout << "\n";
             }
         }
-        myfile.close();
     }
 
     auto operator+(std::expected<std::string, SymbolTableCodes> lhs, std::expected<std::string, SymbolTableCodes> rhs) -> std::expected<Reaction, SymbolTableCodes>
