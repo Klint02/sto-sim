@@ -5,11 +5,12 @@
 #include <map>
 #include <expected>
 #include <unordered_map> //Should not need to be included. Look into why
+#include <any>
 
 
-#include "../stosim/stosim.hpp"
-#include "vessels.hpp"
-
+//#include "../stosim/stosim.hpp"
+//#include "vessels.hpp"
+/*
 stochastic::Vessel simple()
 {
     const auto lambda = 0.001;
@@ -18,7 +19,6 @@ stochastic::Vessel simple()
     const auto B = v.add("B", 0);
     const auto C = v.add("C", 1);
     const auto D = v.add("D", 0);
-
 
     v.add((A + C) >> lambda >>= B + C);
     v.add((B + C) >> lambda >>= D + C);
@@ -99,3 +99,4 @@ stochastic::Vessel seihr(uint32_t N)
     v.add(H >> tau >>= R);                            // hospitalized becomes removed
     return v;
 }
+*/

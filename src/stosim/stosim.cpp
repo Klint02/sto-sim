@@ -7,9 +7,9 @@
 #include <unordered_map>
 #include <cmath>
 #include <random>
-#include <map>
 #include <limits>
 #include <cfloat>
+#include <any>
 #include "stosim.hpp"
 
 namespace stochastic
@@ -77,7 +77,8 @@ namespace stochastic
         return env;
     }
 
-    auto Vessel::add(std::string key, int value) -> std::expected<std::string, SymbolTableCodes>
+    template <typename T>
+    auto Vessel::add(std::string key, T value) -> std::expected<std::string, SymbolTableCodes>
     {
         if (symbol_table.try_emplace(key, value).second)
         {
@@ -88,7 +89,7 @@ namespace stochastic
             return std::unexpected(SymbolTableCodes::MALFORMED_REACTANT);
         }
     }
-
+    
     void Vessel::add(std::expected<stochastic::Reaction, stochastic::SymbolTableCodes> reaction)
     {
         if (reaction)
@@ -97,7 +98,22 @@ namespace stochastic
         }
     }
 
-    double Reaction::computeDelay(const std::unordered_map<std::string, int> &state, double T)
+    template <typename T>
+    T Vessel::get(const std::string& key) const {
+        auto it = symbol_table.find(key);
+        if (it != symbol_table.end()) {
+            try {
+                return std::any_cast<T>(it->second);
+            } catch (const std::bad_any_cast& e) {
+                throw std::runtime_error("Type mismatch");
+            }
+        } else {
+            throw std::out_of_range("Key not found");
+        }
+    }
+/*
+    template <typename T>
+    double Reaction::computeDelay(const std::unordered_map<std::string, T> &state, double Time)
     {
         double product = 1.0;
         for (const auto &reactant : inputs)
@@ -109,7 +125,7 @@ namespace stochastic
             }
             else
             {
-                return T+1;
+                return Time+1;
             }
         }
 
@@ -147,7 +163,7 @@ namespace stochastic
         }
     }
 
-    void simulate(Vessel &vessel, double T)
+    void simulate(Vessel &vessel, double T )
     {
         double t = 0;
 
@@ -179,6 +195,7 @@ namespace stochastic
             std::cout << "\n";
         }
     }
+*/
 
     auto operator+(std::expected<std::string, SymbolTableCodes> lhs, std::expected<std::string, SymbolTableCodes> rhs) -> std::expected<Reaction, SymbolTableCodes>
     {
