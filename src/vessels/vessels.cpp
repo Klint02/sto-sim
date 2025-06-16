@@ -17,11 +17,9 @@ stochastic::Vessel simple()
     const auto A = v.add("A", 100);
     const auto B = v.add("B", 0);
     const auto C = v.add("C", 1);
-    const auto D = v.add("D", 0);
 
 
     v.add((A + C) >> lambda >>= B + C);
-    v.add((B + C) >> lambda >>= D + C);
 
     return v;
 }

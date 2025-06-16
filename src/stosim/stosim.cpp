@@ -75,7 +75,8 @@ namespace stochastic
         this->name = name;
     }
 
-    int& Vessel::environment() {
+    int &Vessel::environment()
+    {
         return env;
     }
 
@@ -111,7 +112,7 @@ namespace stochastic
             }
             else
             {
-                return T+1;
+                return T + 1;
             }
         }
 
@@ -149,7 +150,7 @@ namespace stochastic
         }
     }
 
-    void simulate(Vessel &vessel, double T)
+    void simulate(Vessel &vessel, double T, bool csv)
     {
         double t = 0;
         std::ofstream myfile;
@@ -161,7 +162,7 @@ namespace stochastic
             std::vector<double> delays;
             for (auto &r : vessel.reactions)
             {
-                delays.push_back(r.computeDelay(vessel.symbol_table,T));
+                delays.push_back(r.computeDelay(vessel.symbol_table, T));
             }
 
             double delay = *std::min_element(delays.begin(), delays.end());
@@ -177,12 +178,26 @@ namespace stochastic
             }
 
             //Printing state in terminal each round.
-            myfile << t<<"|";
-            for (const auto &[name, amount] : vessel.symbol_table)
+           
+            if (csv)
             {
-                myfile<< amount<<"|";
+                myfile << t << "|";
+                for (const auto &[name, amount] : vessel.symbol_table)
+                {
+                    myfile << amount << "|";
+                }
+                myfile << "\n"; 
             }
-            myfile << "\n";
+            else
+            {
+
+                std::cout << "t = " << t << ": ";
+                for (const auto &[name, amount] : vessel.symbol_table)
+                {
+                    std::cout << name << "=" << amount << " ";
+                }
+                std::cout << "\n";
+            }
         }
         myfile.close();
     }

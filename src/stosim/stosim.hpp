@@ -57,7 +57,7 @@ namespace stochastic {
             std::string name;
     };
 
-    void simulate(Vessel &vessel, double T );
+    void simulate(Vessel &vessel, double T, bool csv);
         
 
     auto operator+(std::expected<std::string, SymbolTableCodes> lhs, std::expected<std::string, SymbolTableCodes> rhs) -> std::expected<Reaction, SymbolTableCodes>;
