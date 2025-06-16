@@ -155,8 +155,8 @@ namespace stochastic
         double t = 0;
         std::ofstream myfile;
         myfile.open("tester.csv",std::ios::trunc);
-        //first row
-        myfile <<"t|R|H|I|E|S|\n";
+        myfile << vessel.csv_fields;
+
         while (t <= T)
         {
             std::vector<double> delays;
@@ -181,12 +181,14 @@ namespace stochastic
            
             if (csv)
             {
+                
                 myfile << t << "|";
                 for (const auto &[name, amount] : vessel.symbol_table)
                 {
                     myfile << amount << "|";
                 }
                 myfile << "\n"; 
+                
             }
             else
             {

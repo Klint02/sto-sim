@@ -45,7 +45,7 @@ namespace stochastic {
             
             Vessel(std::string name);
             
-
+            std::string csv_fields;
             int& environment();
             auto getName();
             auto add(std::string key, int value) -> std::expected<std::string, SymbolTableCodes>;

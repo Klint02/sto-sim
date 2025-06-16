@@ -6,7 +6,6 @@
 #include <expected>
 #include <unordered_map> //Should not need to be included. Look into why
 
-
 #include "../stosim/stosim.hpp"
 #include "vessels.hpp"
 
@@ -17,10 +16,9 @@ stochastic::Vessel simple()
     const auto A = v.add("A", 100);
     const auto B = v.add("B", 0);
     const auto C = v.add("C", 1);
-
-
     v.add((A + C) >> lambda >>= B + C);
 
+    v.csv_fields = "t|B|C|A|\n";
     return v;
 }
 
@@ -68,7 +66,9 @@ stochastic::Vessel circadian_rhythm()
     v.add(R >> deltaR >>= env);
     v.add(MA >> deltaMA >>= env);
     v.add(MR >> deltaMR >>= env);
-    
+
+    v.csv_fields = "t|R|C|A|MR|MA|D_R|DR|D_A|DA|\n";
+
     return v;
 }
 
@@ -96,5 +96,6 @@ stochastic::Vessel seihr(uint32_t N)
     v.add(I >> gamma >>= R);                          // infectious becomes removed
     v.add(I >> kappa >>= H);                          // infectious becomes hospitalized
     v.add(H >> tau >>= R);                            // hospitalized becomes removed
+    v.csv_fields = "t|R|H|I|E|S|\n";
     return v;
 }
