@@ -73,7 +73,8 @@ namespace stochastic
         this->name = name;
     }
 
-    int& Vessel::environment() {
+    int &Vessel::environment()
+    {
         return env;
     }
 
@@ -109,7 +110,7 @@ namespace stochastic
             }
             else
             {
-                return T+1;
+                return T + 1;
             }
         }
 
@@ -147,7 +148,7 @@ namespace stochastic
         }
     }
 
-    void simulate(Vessel &vessel, double T)
+    void simulate(Vessel &vessel, double T, bool csv)
     {
         double t = 0;
 
@@ -156,7 +157,7 @@ namespace stochastic
             std::vector<int> delays;
             for (auto &r : vessel.reactions)
             {
-                delays.push_back(r.computeDelay(vessel.symbol_table,T));
+                delays.push_back(r.computeDelay(vessel.symbol_table, T));
             }
 
             double delay = *std::min_element(delays.begin(), delays.end());
@@ -170,13 +171,25 @@ namespace stochastic
             {
                 r.update(vessel.symbol_table);
             }
-
-            std::cout << "t = " << t << ": ";
-            for (const auto &[name, amount] : vessel.symbol_table)
+            if (csv)
             {
-                std::cout << name << "=" << amount << " ";
+                std::cout << t << "|";
+                for (const auto &[name, amount] : vessel.symbol_table)
+                {
+                    std::cout << amount << "|";
+                }
+                std::cout << "\n"; 
             }
-            std::cout << "\n";
+            else
+            {
+
+                std::cout << "t = " << t << ": ";
+                for (const auto &[name, amount] : vessel.symbol_table)
+                {
+                    std::cout << name << "=" << amount << " ";
+                }
+                std::cout << "\n";
+            }
         }
     }
 

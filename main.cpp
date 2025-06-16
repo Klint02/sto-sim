@@ -37,7 +37,7 @@ int main(){
     //std::vector<stochastic::Reaction> reactions = {test.value()};
 
     // Run simulation up to time T = 100
-    stochastic::simulate(bab, 1600.0);
+    stochastic::simulate(bab, 1600.0, true);
 
 
     return 0;
