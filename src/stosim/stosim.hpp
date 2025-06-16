@@ -45,8 +45,9 @@ namespace stochastic {
             
             Vessel(std::string name);
             
-            std::string csv_fields;
+
             int& environment();
+            double compute_delay(double lambda, const std::vector<Vessel>& R, const std::map<std::string,int>& state);
             auto getName();
             auto add(std::string key, int value) -> std::expected<std::string, SymbolTableCodes>;
             void add(std::expected<stochastic::Reaction, stochastic::SymbolTableCodes> reaction);
