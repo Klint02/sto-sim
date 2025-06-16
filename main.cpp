@@ -14,7 +14,7 @@ int main(){
     //stochastic::runSimulations(sims, true);
 
 
-    auto bab = seihr(10000);
+    auto bab = circadian_rhythm();
 
     // if (D.error() == stochastic::SymbolTableCodes::ALREADY_PRESENT) {
     //     std::cout << "Error: Shit already present, my guy" << std::endl;
