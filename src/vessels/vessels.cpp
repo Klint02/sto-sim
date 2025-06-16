@@ -19,6 +19,7 @@ stochastic::Vessel simple()
     const auto A = v.add("A", 100);
     const auto B = v.add("B", 0);
     const auto C = v.add("C", 1);
+    v.sim_duration = 1500;
     v.add((A + C) >> lambda >>= B + C);
 
     v.csv_fields = "t|B|C|A|\n";
@@ -53,6 +54,8 @@ stochastic::Vessel circadian_rhythm()
     const auto A = v.add("A", 0);
     const auto R = v.add("R", 0);
     const auto C = v.add("C", 0);
+    v.sim_duration = 100;
+
     v.add((A + DA) >> gammaA >>= D_A);
     v.add(D_A >> thetaA >>= DA + A);
     v.add((A + DR) >> gammaR >>= D_R);
@@ -94,6 +97,7 @@ stochastic::Vessel seihr(uint32_t N)
     const auto I = v.add("I", I0);                    // infectious
     const auto H = v.add("H", 0);                     // hospitalized
     const auto R = v.add("R", 0);                     // removed/immune (recovered + dead)
+    v.sim_duration = 48;
     v.add((S + I) >> beta / N >>= E + I);             // susceptible becomes exposed by infectious
     v.add(E >> alpha >>= I);                          // exposed becomes infectious
     v.add(I >> gamma >>= R);                          // infectious becomes removed

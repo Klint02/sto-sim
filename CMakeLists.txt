@@ -9,8 +9,14 @@ add_library(sto-sim STATIC src/stosim/stosim.cpp)
 add_library(vessels STATIC src/vessels/vessels.cpp)
 
 target_include_directories(sto-sim PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_include_directories(vessels PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 add_executable(sto-sim-miniproject main.cpp)
 
 target_link_libraries(sto-sim-miniproject PRIVATE sto-sim)
 target_link_libraries(sto-sim-miniproject PRIVATE vessels)
+
+add_executable(sto-sim-benchmarking benchmarking.cpp)
+
+target_link_libraries(sto-sim-benchmarking PRIVATE sto-sim)
+target_link_libraries(sto-sim-benchmarking PRIVATE vessels)

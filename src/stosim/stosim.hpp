@@ -21,6 +21,13 @@ namespace stochastic {
         friend std::ostream& operator<<(std::ostream& os, const Reaction& obj);
     };
 
+    enum class SimulationOutputType {
+        LIVE,
+        FILE,
+        CONCLUSION,
+        NONE
+    };
+
     enum class SimCodes
     {
         SUCCESS,
@@ -34,9 +41,7 @@ namespace stochastic {
 
     };
 
-    void runSimulation(int simulation);
 
-    void runSimulations(const std::vector<int>& simulation_vessels, bool multithread) /*-> std::expected<std::string, SimCodes>*/;
 
     
     class Vessel {
@@ -52,12 +57,14 @@ namespace stochastic {
             void add(std::expected<stochastic::Reaction, stochastic::SymbolTableCodes> reaction);
             std::vector<Reaction> reactions;
             std::unordered_map<std::string, int> symbol_table;
+            double sim_duration;
 
         private:
             std::string name;
     };
 
-    void simulate(Vessel &vessel, double T, bool csv);
+    void simulate(Vessel &vessel, SimulationOutputType output_type, std::string path);
+    void runSimulations(std::vector<Vessel> simulation_vessels, bool multithread, int amount) /*-> std::expected<std::string, SimCodes>*/;
 
     //R1
     //Overloading headers
