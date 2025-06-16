@@ -14,7 +14,7 @@ int main(){
     //stochastic::runSimulations(sims, true);
 
 
-    auto bab = simple();
+    auto bab = seihr(10000);
 
     // if (D.error() == stochastic::SymbolTableCodes::ALREADY_PRESENT) {
     //     std::cout << "Error: Shit already present, my guy" << std::endl;
@@ -37,7 +37,7 @@ int main(){
     //std::vector<stochastic::Reaction> reactions = {test.value()};
 
     // Run simulation up to time T = 100
-    stochastic::simulate(bab, 1600.0);
+    stochastic::simulate(bab, 100.0);
 
 
     return 0;

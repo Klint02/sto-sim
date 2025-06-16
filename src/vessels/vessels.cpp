@@ -28,21 +28,21 @@ stochastic::Vessel simple()
 
 stochastic::Vessel circadian_rhythm()
 {
-    const auto alphaA = 50;
-    const auto alpha_A = 500;
+    const auto alphaA = 50.0;
+    const auto alpha_A = 500.0;
     const auto alphaR = 0.01;
-    const auto alpha_R = 50;
-    const auto betaA = 50;
-    const auto betaR = 5;
-    const auto gammaA = 1;
-    const auto gammaR = 1;
-    const auto gammaC = 2;
-    const auto deltaA = 1;
+    const auto alpha_R = 50.0;
+    const auto betaA = 50.0;
+    const auto betaR = 5.0;
+    const auto gammaA = 1.0;
+    const auto gammaR = 1.0;
+    const auto gammaC = 2.0;
+    const auto deltaA = 1.0;
     const auto deltaR = 0.2;
-    const auto deltaMA = 10;
+    const auto deltaMA = 10.0;
     const auto deltaMR = 0.5;
-    const auto thetaA = 50;
-    const auto thetaR = 100;
+    const auto thetaA = 50.0;
+    const auto thetaR = 100.0;
     auto v = stochastic::Vessel{"Circadian Rhythm"};
     const auto env = v.environment();
     const auto DA = v.add("DA", 1);
@@ -70,6 +70,7 @@ stochastic::Vessel circadian_rhythm()
     v.add(R >> deltaR >>= env);
     v.add(MA >> deltaMA >>= env);
     v.add(MR >> deltaMR >>= env);
+    
     return v;
 }
 

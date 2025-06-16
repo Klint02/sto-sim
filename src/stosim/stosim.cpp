@@ -10,6 +10,7 @@
 #include <map>
 #include <limits>
 #include <cfloat>
+#include <fstream>
 #include "stosim.hpp"
 
 namespace stochastic
@@ -153,7 +154,7 @@ namespace stochastic
 
         while (t <= T)
         {
-            std::vector<int> delays;
+            std::vector<double> delays;
             for (auto &r : vessel.reactions)
             {
                 delays.push_back(r.computeDelay(vessel.symbol_table,T));
@@ -171,6 +172,7 @@ namespace stochastic
                 r.update(vessel.symbol_table);
             }
 
+            //Printing state in terminal each round.
             std::cout << "t = " << t << ": ";
             for (const auto &[name, amount] : vessel.symbol_table)
             {
