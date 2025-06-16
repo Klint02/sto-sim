@@ -41,6 +41,8 @@ namespace stochastic
         std::cout << simulation << std::endl;
     }
 
+    //R8
+    //TODO(NKC): Implement multithreading
     void runSimulations(const std::vector<int> &simulation_vessels, bool multithread) //-> std::expected<std::string, SimCodes>
     {
         if (multithread)
@@ -80,6 +82,8 @@ namespace stochastic
         return env;
     }
 
+    //R3
+    //Creates/ adds a reactant to the symbol_table of a vessel. If a symbol is already present it returns that error code 
     auto Vessel::add(std::string key, int value) -> std::expected<std::string, SymbolTableCodes>
     {
         if (symbol_table.try_emplace(key, value).second)
@@ -88,7 +92,7 @@ namespace stochastic
         }
         else
         {
-            return std::unexpected(SymbolTableCodes::MALFORMED_REACTANT);
+            return std::unexpected(SymbolTableCodes::ALREADY_PRESENT);
         }
     }
 
@@ -100,13 +104,20 @@ namespace stochastic
         }
     }
 
+    //R3
+    //Lookup of things in a symbol_table (should proberbly be placed inside the vessel itself)
+    const auto lookup (const std::string& reactant, const std::unordered_map<std::string, int> &state) {
+        return state.find(reactant);
+    }
+
+
     double Reaction::computeDelay(const std::unordered_map<std::string, int> &state, double T)
     {
         double product = 1.0;
         for (const auto &reactant : inputs)
         {
-            const auto reactant_state = state.find(reactant);
-            if (reactant_state->second > 0)
+            const auto reactant_state = lookup(reactant, state);
+            if (reactant_state != state.end() && reactant_state->second > 0)
             {
                 product *= reactant_state->second;
             }
@@ -150,6 +161,9 @@ namespace stochastic
         }
     }
 
+
+    //R4
+    //Simulation algorithm that runs on a given vessel
     void simulate(Vessel &vessel, double T, bool csv)
     {
         double t = 0;
@@ -177,8 +191,8 @@ namespace stochastic
                 r.update(vessel.symbol_table);
             }
 
-            //Printing state in terminal each round.
-           
+            //R6
+            //dumping of data to a file
             if (csv)
             {
                 
@@ -191,6 +205,7 @@ namespace stochastic
                 
             }
             else
+            //Printing state in terminal each round.
             {
 
                 std::cout << "t = " << t << ": ";
@@ -204,6 +219,9 @@ namespace stochastic
         myfile.close();
     }
 
+    //R1
+    //Our type for the reaction overloads is an std::expected containing a string or a reason for why the reaction failed.
+    //This lets us check for failed reactions by simply using an if statement for both lhs and rhs.
     auto operator+(std::expected<std::string, SymbolTableCodes> lhs, std::expected<std::string, SymbolTableCodes> rhs) -> std::expected<Reaction, SymbolTableCodes>
     {
         if (lhs && rhs)
@@ -219,7 +237,7 @@ namespace stochastic
 
     auto operator>>(std::expected<std::string, SymbolTableCodes> lhs, double rhs) -> std::expected<Reaction, SymbolTableCodes>
     {
-        if (lhs && rhs)
+        if (lhs)
         {
             Reaction reaction;
             reaction.inputs.push_back(lhs.value());
@@ -232,7 +250,7 @@ namespace stochastic
 
     auto operator>>(std::expected<Reaction, SymbolTableCodes> lhs, double rhs) -> std::expected<Reaction, SymbolTableCodes>
     {
-        if (lhs && rhs)
+        if (lhs)
         {
             lhs.value().delay = rhs;
             return lhs;
@@ -265,7 +283,7 @@ namespace stochastic
 
     auto operator>>=(std::expected<Reaction, SymbolTableCodes> lhs, const int rhs) -> std::expected<Reaction, SymbolTableCodes>
     {
-        if (lhs && rhs)
+        if (lhs)
         {
             std::cout << "Shit aint implemented yet" << std::endl;
             return lhs;

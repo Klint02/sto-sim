@@ -9,6 +9,9 @@
 #include "../stosim/stosim.hpp"
 #include "vessels.hpp"
 
+
+//R5
+//Implementation of all the three algorithms
 stochastic::Vessel simple()
 {
     const auto lambda = 0.001;
