@@ -6,7 +6,6 @@
 #include <expected>
 #include <unordered_map> //Should not need to be included. Look into why
 
-
 #include "../stosim/stosim.hpp"
 #include "vessels.hpp"
 
@@ -17,30 +16,29 @@ stochastic::Vessel simple()
     const auto A = v.add("A", 100);
     const auto B = v.add("B", 0);
     const auto C = v.add("C", 1);
-
-
     v.add((A + C) >> lambda >>= B + C);
 
+    v.csv_fields = "t|B|C|A|\n";
     return v;
 }
 
 stochastic::Vessel circadian_rhythm()
 {
-    const auto alphaA = 50;
-    const auto alpha_A = 500;
+    const auto alphaA = 50.0;
+    const auto alpha_A = 500.0;
     const auto alphaR = 0.01;
-    const auto alpha_R = 50;
-    const auto betaA = 50;
-    const auto betaR = 5;
-    const auto gammaA = 1;
-    const auto gammaR = 1;
-    const auto gammaC = 2;
-    const auto deltaA = 1;
+    const auto alpha_R = 50.0;
+    const auto betaA = 50.0;
+    const auto betaR = 5.0;
+    const auto gammaA = 1.0;
+    const auto gammaR = 1.0;
+    const auto gammaC = 2.0;
+    const auto deltaA = 1.0;
     const auto deltaR = 0.2;
-    const auto deltaMA = 10;
+    const auto deltaMA = 10.0;
     const auto deltaMR = 0.5;
-    const auto thetaA = 50;
-    const auto thetaR = 100;
+    const auto thetaA = 50.0;
+    const auto thetaR = 100.0;
     auto v = stochastic::Vessel{"Circadian Rhythm"};
     const auto env = v.environment();
     const auto DA = v.add("DA", 1);
@@ -68,6 +66,9 @@ stochastic::Vessel circadian_rhythm()
     v.add(R >> deltaR >>= env);
     v.add(MA >> deltaMA >>= env);
     v.add(MR >> deltaMR >>= env);
+
+    v.csv_fields = "t|R|C|A|MR|MA|D_R|DR|D_A|DA|\n";
+
     return v;
 }
 
@@ -95,5 +96,6 @@ stochastic::Vessel seihr(uint32_t N)
     v.add(I >> gamma >>= R);                          // infectious becomes removed
     v.add(I >> kappa >>= H);                          // infectious becomes hospitalized
     v.add(H >> tau >>= R);                            // hospitalized becomes removed
+    v.csv_fields = "t|R|H|I|E|S|\n";
     return v;
 }
