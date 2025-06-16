@@ -17,6 +17,9 @@
 namespace stochastic
 {
 
+    //R2 part 2
+    //Pretty printing of a single reaction
+    //Loop through all reactions and cout them
     std::ostream &operator<<(std::ostream &os, const Reaction &obj)
     {
         for (auto &reactant : obj.inputs)
